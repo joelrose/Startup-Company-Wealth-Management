@@ -1,19 +1,34 @@
+<style>
+    .onboardingContainer {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-evenly;
+    }
+</style>
 <h1>
     <i class="fa fa-cubes"></i>
     Wealth Management
     <i class="fa fa-times pull-right close-button" close-all-ui></i>
 </h1>
-
 <div class="padding">
-
-    <div ng-switch="modCtrl.getOnboardingStep()">
-        <div ng-switch-when="1">
+    <div ng-if="!modCtrl.hasInvested()" class="onboarding">
+        <div>
             <div style="display: flex;align-items: center;">
                 <input type="number" id="Comp" ng-model="investmentAmount" style="width: 300px; margin:5px auto">
-                <button class="medium green" ng-click="" style="margin:5px auto; margin-left: 10px;">Invest  {{investmentAmount}}$</button>
+                <button class="medium green" ng-click="modCtrl.investAmount(investmentAmount)" style="margin:5px auto; margin-left: 10px;">Invest  {{investmentAmount}}$</button>
+            </div>
+            <div>
+                <!-- <td class="text-bold">
+                    <input type="range" class="secondary-color" ng-model="modCtrl.getInvestmentModelPlan().minimumInvestment" step="100" min="0" max="500000000">
+                    <div class="text-center ng-binding color-red animated flash infinite" ng-class="{'color-red animated flash infinite': adSpacesCtrl.guaranteedImpressions > adSpacesCtrl.yesterdaysImpressions }">
+                        {{ modCtrl.getInvestmentModelPlan().minimumInvestment }}
+                        <tooltip ng-show="adSpacesCtrl.guaranteedImpressions > adSpacesCtrl.yesterdaysImpressions" key="exceeded_yesterday_impressions_warning" class="ng-isolate-scope"><i class="fa fa-info-circle" uib-tooltip-html="string" tooltip-append-to-body="true"></i></tooltip>
+                    </div>
+                </td> -->
             </div>
         </div>
-        <div ng-switch-when="2">
+        <div>
                 <div class="flex-row item-list loans">
                         <div class="item" ng-class="{active: investmentModel.active }" ng-repeat="investmentModel in modCtrl.getInvestmentModels() track by investmentModel.name">
                             <h3 class="text-center" style="margin: 0 0 10px 0;">{{ investmentModel.name }}</h3>
@@ -64,21 +79,6 @@
                     </div>
         </div>
     </div>
-    <div class="padding border-top-2">
-        <div class="retirement-progress">
-            <div class="indicator" style="width:8%"></div>
-            <ul class="points">
-                <li uib-popover-html="Amount" popover-trigger="mouseenter" popover-append-to-body="true" popover-title="Amount">
-                    <div class="dot"></div>
-                    <div class="label ng-binding">Amount</div>
-                </li>
-                <li uib-popover-html="Bank" popover-trigger="mouseenter" popover-append-to-body="true" popover-title="Bank">
-                    <div class="dot"></div>
-                    <div class="label ng-binding">Wealth Management Bank</div>
-                </li>
-            </ul>
-        </div>
-    </div>
 
     <div ng-if="modCtrl.hasInvested()">
         <div style="display: flex; flex-direction: row; align-content: space-between;">
@@ -86,92 +86,40 @@
                 <input type="number" id="Comp" ng-model="investmentAmount" style="width: 300px; margin:5px auto">
                 <button class="medium green" ng-click="modCtrl.investAmount(investmentAmount)" style="margin:5px auto; margin-left: 10px;">Invest  {{investmentAmount}}$</button>
             </div>
-            <div style="flex: 1 1 auto;"></div>
-            <div ng-if="modCtrl.hasInvested()" style="display: flex; align-items: center;    flex-direction: row;">
+            <div style="display: flex; align-items: center;    flex-direction: row;">
                 <input type="number" id="Comp" ng-model="investmentAmount" style="width: 300px; margin:5px auto">
                 <button class="medium green" ng-click="modCtrl.investAmount(investmentAmount)" style="margin:5px auto; margin-left: 10px;">Payout  {{investmentAmount}}$</button>
             </div>
-        </div>
-
-        <div class="flex-row item-list loans">
-            <div class="item" ng-class="{active: investmentModel.active }" ng-repeat="investmentModel in modCtrl.getInvestmentModels() track by investmentModel.name">
-                <h3 class="text-center" style="margin: 0 0 10px 0;">{{ investmentModel.name }}</h3>
-                <div class="content">
-                    <table class="medium">
-                        <tbody>
-                            <tr>
-                                <td class="dimmed">
-                                    <span >Mindestbetrag</span>
-                                    <tooltip key="minimum_valuation_tooltip" class="ng-isolate-scope"><i class="fa fa-info-circle" uib-tooltip-html="string" tooltip-append-to-body="true"></i></tooltip>
-                                </td>
-                                <td class="text-right">{{ investmentModel.minimumInvestment }}$</td>
-                            </tr>
-                            <tr>
-                                <td class="dimmed">Stockratio</td>
-                                <td class="text-right">{{ investmentModel.stockPercentage }}%</td>
-                            </tr>
-                            <tr>
-                                <td class="dimmed">Fondratio</td>
-                                <td class="text-right">{{ investmentModel.fondPercentage }}%</td>
-                            </tr>
-                            <tr>
-                                <td class="dimmed">Resourceratio</td>
-                                <td class="text-right">{{ investmentModel.resourcesPercentage }}%</td>
-                            </tr>
-                            <tr>
-                                <td class="dimmed">Risk</td>
-                                <td class="text-right">{{ investmentModel.risk }}%</td>
-                            </tr>
-                            <tr class="text-bold">
-                                <td class="dimmed">Cost per day</td>
-                                <td class="text-right">{{ investmentModel.costPerDay }}$</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <hr style="margin: 10px 0;">
-                                </td>
-                            </tr>
-                    </tbody>
-                </table>
-                    <div class="text-center" style="margin: 1.5vh">
-                        <button type="button" class="square" ng-if="!investmentModel.active" ng-click="modCtrl.selectPlan($index)"
-                        ng-class="{ disabled: (loan.minimumValuation != null && loan.minimumValuation > ctrl.companyValuation) }"
-                        tooltip-enable="true" tooltip-html="AUSWaeHLEN">Auswaehlen</button>
-                    </div>
-                </div>
+            <div>
+                <button class="medium green" ng-click="modCtrl.closeInvestment()" style="margin:5px auto;">Close Investment</button>
             </div>
         </div>
 
         <canvas id="npmLineChart" width="300" height="100" align="center"></canvas>
+        
+        <div class="padding" align="center">
+            <h3>Portfolio performance</h3>
 
-        <div class="investment-overview" ng-if="modCtrl.hasInvested()">
-            <h3>Portfolio performance</h5>
-            <div style="display: flex; flex-direction: row; align-content: space-between;">
-                <div>
-                    <h4>Change (1 days): {{ modCtrl.getLastNDays(1) }}%</h4>
-                </div>
-                <div style="flex: 1 1 auto;"></div>
-                <div>
-                    <h4>Change (7 days): {{ modCtrl.getLastNDays(7) }}%</h4>
-                </div>
-                <div style="flex: 1 1 auto;"></div>
-                <div>
-                    <h4>Change (30 days): {{ modCtrl.getLastNDays(30) }}%</h4>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row; align-content: space-between;">
-                <div>
-                    <h4>Currrent Value: {{ modCtrl.getCurrentValue() }}$</h4>
-                </div>
-                <div style="flex: 1 1 auto;"></div>
-                <div>
-                    <h4>Invested Amount: {{ modCtrl.getInvestedAmount() }}$</h4>
-                </div>
-                <div style="flex: 1 1 auto;"></div>
-                <div>
-                    <button class="medium green" ng-click="modCtrl.closeInvestment()" style="margin:5px auto;">Close Investment</button>
-                </div>
-            </div>
+            <table border="1" style="width:100%">
+                <tr>
+                    <td align="center"><h4>Change (1 day):</h4></td>
+                    <td align="center"><h4>{{  modCtrl.getLastNDays(1) }}%</h4></td>
+                    <td align="center"><h4>Change (7 days):</h4></td>
+                    <td align="center"><h4>{{  modCtrl.getLastNDays(7) }}%</h4></td>
+                </tr>
+                <tr>
+                    <td align="center"><h4>Change (30 days):</h4></td>
+                    <td align="center"><h4>{{  modCtrl.getLastNDays(30) }}%</h4></td>
+                    <td align="center"><h4>Change (Alltime):</h4></td>
+                    <td align="center"><h4>{{  modCtrl.getLastNDays(100) }}%</h4></td>
+                </tr>
+                <tr>
+                    <td align="center"><h4>Currrent Value:</h4></td>
+                    <td align="center"><h4>{{ modCtrl.getCurrentValue() }}$</h4></td>
+                    <td align="center"><h4>Invested Amount:</h4></td>
+                    <td align="center"><h4>{{ modCtrl.getInvestedAmount() }}$</h4></td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

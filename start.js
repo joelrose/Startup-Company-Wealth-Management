@@ -1,12 +1,6 @@
 const rs = GetRootScope();
 let _modPath;
 
-const OnBoardingSteps = {
-    AMOUNT: 1,
-    BANK: 2,
-    FINISHED: 3,
-};
-
 const InvestmentModels = 
 [
     {
@@ -53,7 +47,6 @@ const InvestmentModels =
 
 let ChartConfig;
 let MyLineChart;
-let OnboardingStep;
 
 function getLastDays(n) {
     let history = rs.settings.wealthManagementMod.investmentHistory;
@@ -72,7 +65,6 @@ function getLastDays(n) {
 }
 
 function createChart() {
-
     let newDayList = [];
     let newProfitList = [];
 
@@ -90,7 +82,7 @@ function createChart() {
         newProfitList.push(money);
     }
 
-    ctx = document.getElementById('npmLineChart').getContext('2d');
+    let ctx = document.getElementById('npmLineChart').getContext('2d');
 	ChartConfig = {
 		type: 'line',
 		data: {
@@ -144,14 +136,14 @@ exports.initialize = function (modPath) {
             viewPath: _modPath + "view.html",
             controller: function ($rootScope) {
                 var selectedPlan = 0;
+                let hasInvested = rs.settings.wealthManagementMod.hasInvested;
 
-                if (rs.settings.wealthManagementMod && rs.settings.wealthManagementMod.hasInvested == true) {
-                    createChart();
+                if (hasInvested == true) {
+                    setTimeout(() => {createChart();}, 100);
                 }
 
                 this.payoutAmount = function (amount) {
                     let money = getCurrentValue();
-
                 }
 
                 this.getCurrentValue = function () {
@@ -186,7 +178,7 @@ exports.initialize = function (modPath) {
                     rs.settings.wealthManagementMod.investmentDay = rs.daysPlayed;
 
                     rs.addTransaction("Wealth Management Pay In", amount);
-                    createChart();
+                    setTimeout(() => {createChart();}, 100);
                 }
 
                 this.hasInvested = function () {
@@ -236,17 +228,8 @@ exports.initialize = function (modPath) {
                     return InvestmentModels;
                 }
 
-                this.nextOnboardingStep = function () {
-
-                }
-
-                this.previousOnboardingStep = function () {
-                    
-                }
-
-                this.getOnboardingStep = function () {
-                    console.log(OnBoardingStep);
-                    return OnboardingStep;
+                this.getInvestmentModelPlan = function () {
+                    return InvestmentModels[selectedPlan]
                 }
             }
         }
@@ -262,10 +245,11 @@ exports.initialize = function (modPath) {
 };
 
 exports.onLoadGame = settings => {
-    settings.wealthManagementMod = {
-        investmentModels: InvestmentModels,
-    };
-    OnboardingStep = (rs.settings.wealthManagementMod.hasInvested == false) ? OnBoardingSteps.AMOUNT : OnBoardingSteps.FINISHED;
+    if(settings.wealthManagementMod == undefined) {
+        settings.wealthManagementMod = {
+            investmentModels: InvestmentModels,
+        };
+    }
 }
 
 exports.onNewHour = settings => {};
@@ -276,7 +260,7 @@ exports.onNewDay = settings => {
             ((Math.random() * 10 - 3) / 100) * (1 + (settings.wealthManagementMod.investmentModels[settings.wealthManagementMod.plan].risk/100));
 
         settings.wealthManagementMod.investmentHistory.push(todaysInvestmentFactor);
-        createChart();
+        setTimeout(() => {createChart();}, 100);
     }
 };
 

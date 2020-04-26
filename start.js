@@ -72,17 +72,18 @@ function createChart() {
     rs.settings.wealthManagementMod.investmentDay
   );
 
-  newDayList.push(investmentDay);
+  newDayList.push("Day " + investmentDay);
   newProfitList.push(investAmount);
 
   let money = rs.settings.wealthManagementMod.investmentAmount;
   for (let i = 1; i < history.length; i++) {
-    newDayList.push(investmentDay + i);
+    let t = investmentDay + i;
+    newDayList.push("Day " + t);
     money = money * history[i] + money;
     newProfitList.push(money);
   }
 
-  let ctx = document.getElementById("npmLineChart").getContext("2d");
+  let ctx = document.getElementById("lineChart").getContext("2d");
   ChartConfig = {
     type: "line",
     data: {
@@ -185,6 +186,8 @@ exports.initialize = function(modPath) {
             rs.settings.wealthManagementMod.investAmount = money;
           }
 
+          debugger;
+
           let hasError = true;
           // Safe buy
           rs.safeBuy(
@@ -245,7 +248,7 @@ exports.initialize = function(modPath) {
 
           selectedPlan = 0;
           settingsEnabled = false;
-
+                    
           rs.settings.balance += money;
           rs.addTransaction("Close Investment", money);
         };
@@ -289,7 +292,11 @@ exports.initialize = function(modPath) {
 
         this.settingsEnabled = function () {
             return settingsEnabled;
-        }
+        };
+
+        this.getBalance = function () {
+            return rs.settings.balance;
+        }    
       }
     }
   ];
@@ -327,9 +334,9 @@ exports.onNewDay = settings => {
           100);
 
     settings.wealthManagementMod.investmentHistory.push(todaysInvestmentFactor);
-    setTimeout(() => {
-      createChart();
-    }, 200);
+    // setTimeout(() => {
+    //   createChart();
+    // }, 200);
   }
 };
 

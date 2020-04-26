@@ -14,7 +14,9 @@
 <div class="padding">
     <div ng-if="!modCtrl.hasInvested()" class="onboardingContainer">
         <h3 style="text-align: center; margin: 20px 0;">Wealth Management Onboarding</h3>
-        <p class="dimmed padding" style="margin-bottom: 0; padding-bottom: 0;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+        <p class="dimmed padding" style="margin-bottom: 0; padding-bottom: 0;">Lorem ipsum dolor sit amet, consetetur
+            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+            voluptua. At vero eos et accusam et</p>
         <div>
             <div class="flex-row item-list loans">
                 <div class="item" ng-class="{active: investmentModel.active }"
@@ -27,7 +29,7 @@
                             <tbody>
                                 <tr>
                                     <td class="dimmed">
-                                        <span>Mindestbetrag</span>
+                                        <span>Minimum Investment</span>
                                         <tooltip key="minimum_valuation_tooltip" class="ng-isolate-scope"><i
                                                 class="fa fa-info-circle" uib-tooltip-html="string"
                                                 tooltip-append-to-body="true"></i></tooltip>
@@ -72,9 +74,8 @@
                         <div class="text-center" style="margin: 1.5vh">
                             <button type="button" class="square" ng-if="!investmentModel.active"
                                 ng-click="modCtrl.selectPlan($index)"
-                                ng-class="{ disabled: (loan.minimumValuation != null && loan.minimumValuation > ctrl.companyValuation) }"
-                                tooltip-enable="true" tooltip-html="AUSWaeHLEN">
-                                Auswaehlen
+                                tooltip-enable="true" tooltip-html="Select">
+                                Select
                             </button>
                         </div>
                     </div>
@@ -82,21 +83,15 @@
             </div>
         </div>
         <div style="margin: 30px auto;">
-            <input type="number" id="Comp" ng-model="investmentAmount" style="width: 300px; margin:5px auto" />
-            <button class="medium green" ng-click="modCtrl.investAmount(investmentAmount)"
+            <input type="number" id="Comp" ng-model="investmentAmount"
+                min="{{modCtrl.getInvestmentModelPlan().minimumInvestment}}" max="{{modCtrl.getBalance()}}"
+                style="width: 300px; margin:5px auto" />
+            <button ng- ng-disabled="investmentAmount < modCtrl.getInvestmentModelPlan().minimumInvestment || investmentAmount > modCtrl.getBalance()" 
+                class="medium green" ng-click="modCtrl.investAmount(investmentAmount)"
                 style="margin:5px auto; margin-left: 10px;">
-                Invest {{investmentAmount}}$
+                Invest
             </button>
         </div>
-        <!-- <div>
-            <td class="text-bold">
-                <input type="range" class="secondary-color" ng-model="modCtrl.getInvestmentModelPlan().minimumInvestment" step="100" min="0" max="500000000">
-                <div class="text-center ng-binding color-red animated flash infinite" ng-class="{'color-red animated flash infinite': adSpacesCtrl.guaranteedImpressions > adSpacesCtrl.yesterdaysImpressions }">
-                    {{ modCtrl.getInvestmentModelPlan().minimumInvestment }}
-                    <tooltip ng-show="adSpacesCtrl.guaranteedImpressions > adSpacesCtrl.yesterdaysImpressions" key="exceeded_yesterday_impressions_warning" class="ng-isolate-scope"><i class="fa fa-info-circle" uib-tooltip-html="string" tooltip-append-to-body="true"></i></tooltip>
-                </div>
-            </td> 
-        </div> -->
     </div>
 
     <div ng-if="modCtrl.hasInvested()">
@@ -108,7 +103,7 @@
                 </button>
             </div>
 
-            <canvas id="npmLineChart" width="300" height="100" align="center"></canvas>
+            <canvas id="lineChart" width="300" height="100" align="center"></canvas>
 
             <div class="padding" align="center">
                 <h3>Portfolio performance</h3>
